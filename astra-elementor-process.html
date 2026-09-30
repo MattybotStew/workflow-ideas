@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astra + Elementor — Process Playbook</title>
+  <meta name="description" content="Scaffold deck. The Astra + Elementor build process, taught as a walkthrough. Content pending outline." />
+
+  <link rel="stylesheet" href="https://use.typekit.net/lqh7ybe.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       ASTRA + ELEMENTOR PROCESS PLAYBOOK — scaffold
+       Same design system as the Gerotech deck. Content pending.
+       ============================================================ */
+
+    :root {
+      --clr-orange:       #F38A2C;
+      --clr-orange-light: #F9A94A;
+      --clr-orange-deep:  #B45000;
+      --clr-orange-tint:  rgba(243, 138, 44, 0.10);
+      --clr-ink:          #0D0D0D;
+      --clr-dark-bg:      #1C1C21;
+      --clr-dark-band:    #242426;
+      --clr-dark-nav:     #3A3A40;
+      --clr-gray-body:    #6B6B76;
+      --clr-gray-muted:   #9A9AA8;
+      --clr-gray-border:  #E4E4EA;
+      --clr-gray-card:    #F9F9FB;
+      --clr-gray-band:    #F2F2F2;
+      --clr-white:        #FFFFFF;
+
+      --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+      --font-sans: 'navigo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+      --ls-caps: 0.14em;
+      --ls-meta: 0.08em;
+
+      --max: 1180px;
+      --gutter: clamp(24px, 4.4vw, 72px);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; padding: 0; height: 100%; background: var(--clr-dark-bg); }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--clr-ink);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    /* ── Slide shell ───────────────────────────────────────── */
+
+    .deck { position: relative; height: 100%; width: 100%; }
+
+    .slide {
+      display: none;
+      position: absolute;
+      inset: 0;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(44px, 5.4vh, 76px) var(--gutter) clamp(64px, 8vh, 92px);
+      background: var(--clr-white);
+      overflow: hidden;
+    }
+
+    .slide.is-active { display: flex; }
+
+    .slide--dark { background: var(--clr-dark-bg); color: var(--clr-white); }
+    .slide--card { background: var(--clr-gray-card); }
+
+    .slide--sheet { padding: clamp(30px, 3.6vh, 48px) var(--gutter) clamp(52px, 6.6vh, 76px); }
+    .slide--sheet .sheetimg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .slide--sheet .sheetimg img {
+      max-width: 100%; max-height: 100%; width: auto; height: auto;
+      display: block; box-shadow: 0 10px 40px rgba(0,0,0,.10);
+    }
+
+    .slide__inner { width: 100%; max-width: var(--max); margin: 0 auto; }
+
+    /* ── Typography ────────────────────────────────────────── */
+
+    .eyebrow {
+      margin: 0 0 14px;
+      font-size: clamp(11px, 0.8vw, 12.5px);
+      font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase;
+      color: var(--clr-orange-deep);
+    }
+
+    .slide--dark .eyebrow { color: var(--clr-orange); }
+
+    .headline-rule { width: 48px; height: 4px; background: var(--clr-orange); margin: 0 0 20px; }
+
+    h1.slide__title, h2.slide__title {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: clamp(34px, 3.7vw, 58px);
+      line-height: 1.03; letter-spacing: -0.012em;
+      margin: 0 0 16px; max-width: 26ch;
+    }
+
+    .slide__title .accent { color: var(--clr-orange); }
+
+    .lede {
+      font-size: clamp(15px, 1.15vw, 18px); line-height: 1.55;
+      color: var(--clr-gray-body); max-width: 74ch; margin: 0 0 16px;
+    }
+
+    .slide--dark .lede { color: #D9D9E0; }
+    .body-text { font-size: clamp(14px, 1vw, 16px); line-height: 1.6; color: var(--clr-gray-body); }
+    .slide--dark .body-text { color: #CFCFD8; }
+    strong { color: var(--clr-ink); font-weight: 700; }
+    .slide--dark strong { color: var(--clr-white); }
+
+    /* ── Bullets ───────────────────────────────────────────── */
+
+    .bullets { list-style: none; margin: 0; padding: 0; }
+
+    .bullets li {
+      position: relative; padding: 0 0 0 26px; margin: 0 0 12px;
+      font-size: clamp(14px, 1.02vw, 16px); line-height: 1.5; color: var(--clr-gray-body);
+    }
+
+    .bullets li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 13px; height: 3px; background: var(--clr-orange); }
+    .bullets li strong { color: var(--clr-ink); }
+    .slide--dark .bullets li { color: #CFCFD8; }
+    .slide--dark .bullets li strong { color: var(--clr-white); }
+
+    /* ── Figure + guide ────────────────────────────────────── */
+
+    .stepgrid {
+      display: grid; grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr);
+      gap: clamp(26px, 3.2vw, 48px); align-items: start;
+    }
+
+    .stepgrid--narrow { grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.5fr); }
+    /* a portrait phone shot would otherwise drive the slide height */
+    .stepgrid--narrow .shot img { max-height: 520px; width: auto; margin: 0 auto; }
+
+    .shot { background: #fff; border: 1px solid var(--clr-gray-border); overflow: hidden; }
+    .shot img { display: block; width: 100%; height: auto; }
+    .shot figcaption {
+      font-size: 11.5px; color: var(--clr-gray-muted);
+      padding: 8px 12px; border-top: 1px solid var(--clr-gray-border); letter-spacing: 0.02em;
+    }
+
+    .guide h3 { font-size: 11px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--clr-orange-deep); margin: 0 0 14px; }
+
+    .proof { margin-top: 20px; padding: 14px 16px; background: var(--clr-orange-tint); border-left: 4px solid var(--clr-orange); }
+    .proof span { display: block; font-size: 10px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--clr-orange-deep); margin-bottom: 6px; }
+    .proof p { margin: 0; font-size: clamp(13px, 0.95vw, 15px); line-height: 1.5; color: var(--clr-ink); }
+
+    /* ── Thumb strip ───────────────────────────────────────── */
+
+    .thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+    .thumbs .shot figcaption { font-size: 10.5px; padding: 6px 9px; }
+    .thumbs--uniform .shot img { height: 168px; object-fit: cover; object-position: top center; }
+
+    /* ── Phase map ─────────────────────────────────────────── */
+
+    .phases {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+      background: var(--clr-gray-border); border: 1px solid var(--clr-gray-border);
+      margin-top: clamp(16px, 2.4vh, 26px);
+    }
+
+    .phase { background: var(--clr-white); padding: clamp(13px, 1.7vh, 18px) 16px; }
+    .phase__num { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--clr-orange-deep); letter-spacing: var(--ls-meta); display: block; margin-bottom: 6px; }
+    .phase__name { font-family: var(--font-display); font-weight: 600; font-size: clamp(16px, 1.25vw, 20px); line-height: 1.15; display: block; margin-bottom: 6px; color: var(--clr-ink); }
+    .phase__why { font-size: clamp(11.5px, 0.82vw, 13px); line-height: 1.45; color: var(--clr-gray-body); }
+
+    /* ── Checklist ─────────────────────────────────────────── */
+
+    .checklist {
+      list-style: none; margin: clamp(14px, 2.2vh, 24px) 0 0; padding: 0;
+      display: grid; grid-auto-flow: column;
+      grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(5, auto);
+      gap: 0 40px;
+    }
+
+    .checklist li {
+      position: relative; padding: 11px 0 11px 40px;
+      border-bottom: 1px solid var(--clr-gray-border);
+      font-size: clamp(13.5px, 1vw, 15.5px); line-height: 1.45; color: var(--clr-ink);
+    }
+
+    .checklist li::before { content: ""; position: absolute; left: 0; top: 11px; width: 20px; height: 20px; border: 2px solid var(--clr-orange); background: #fff; }
+
+    /* ── Data table ────────────────────────────────────────── */
+
+    .table-wrap { margin-top: clamp(14px, 2.2vh, 24px); }
+    table.data { width: 100%; border-collapse: collapse; font-size: clamp(12px, 0.92vw, 14px); line-height: 1.42; }
+    table.data th {
+      text-align: left; font-size: clamp(10px, 0.7vw, 11px); font-weight: 700;
+      letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--clr-gray-body);
+      padding: 0 14px 9px 0; border-bottom: 2px solid var(--clr-ink); vertical-align: bottom;
+    }
+    table.data td { padding: 11px 14px 11px 0; border-bottom: 1px solid var(--clr-gray-border); vertical-align: top; color: var(--clr-gray-body); }
+    table.data td:first-child { color: var(--clr-ink); font-weight: 700; }
+    .fix { color: var(--clr-ink); }
+    .fix__pri { display: inline-block; min-width: 18px; font-weight: 700; color: var(--clr-orange-deep); }
+    .status {
+      display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: var(--ls-meta);
+      text-transform: uppercase; padding: 4px 8px; white-space: nowrap;
+      background: var(--clr-orange-tint); color: var(--clr-orange-deep);
+    }
+
+    /* ── Licence payoff ────────────────────────────────────── */
+
+    .licences { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: clamp(16px, 2.4vh, 26px); }
+    .lic { background: var(--clr-white); border: 1px solid var(--clr-gray-border); padding: 20px 22px; }
+    .lic--kept { border-left: 4px solid var(--clr-orange); }
+    .lic__tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: var(--ls-meta); text-transform: uppercase; padding: 4px 9px; margin-bottom: 12px; background: var(--clr-ink); color: #fff; }
+    .lic--kept .lic__tag { background: var(--clr-orange); }
+    .lic h4 { font-family: var(--font-display); font-weight: 600; font-size: clamp(18px, 1.45vw, 23px); margin: 0 0 8px; color: var(--clr-ink); }
+    .lic p { font-size: clamp(12.5px, 0.92vw, 14.5px); line-height: 1.5; color: var(--clr-gray-body); margin: 0; }
+
+    /* ── Callout ───────────────────────────────────────────── */
+
+    .callout {
+      display: flex; gap: 16px; align-items: flex-start;
+      margin-top: clamp(16px, 2.4vh, 28px);
+      padding: clamp(14px, 1.8vh, 20px) clamp(18px, 1.8vw, 26px);
+      background: var(--clr-orange-tint); border-left: 4px solid var(--clr-orange); max-width: 92ch;
+    }
+
+    .callout__label { flex: none; font-size: 10.5px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--clr-orange-deep); padding-top: 3px; white-space: nowrap; }
+    .callout__text { margin: 0; font-size: clamp(14px, 1.05vw, 17px); line-height: 1.45; color: var(--clr-ink); }
+    .slide--dark .callout { background: rgba(243,138,44,.14); }
+    .slide--dark .callout__text { color: #fff; }
+    .slide--dark .callout__label { color: var(--clr-orange); }
+
+    /* ── Stats ─────────────────────────────────────────────── */
+
+    .stat-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1px; background: var(--clr-gray-border);
+      border-top: 1px solid var(--clr-gray-border); border-bottom: 1px solid var(--clr-gray-border);
+      margin-top: clamp(18px, 2.6vh, 30px);
+    }
+
+    .stat { background: var(--clr-white); padding: clamp(16px, 2.1vh, 24px) 18px; }
+    .slide--card .stat { background: var(--clr-gray-card); }
+    .stat__value { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 2.6vw, 40px); line-height: 1; letter-spacing: -0.01em; color: var(--clr-ink); display: block; margin-bottom: 7px; }
+    .stat__label { font-size: clamp(10px, 0.76vw, 12px); font-weight: 700; letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--clr-gray-body); line-height: 1.4; display: block; }
+
+    /* ── Split ─────────────────────────────────────────────── */
+
+    .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: clamp(24px, 3.4vw, 56px); }
+    .split__head { font-family: var(--font-display); font-weight: 600; font-size: clamp(19px, 1.5vw, 25px); margin: 0 0 12px; color: var(--clr-ink); }
+    .slide--dark .split__head { color: var(--clr-white); }
+
+    /* ── Deck chrome ───────────────────────────────────────── */
+
+    .chrome { position: fixed; left: 0; right: 0; z-index: 10; display: flex; align-items: center; gap: 16px; pointer-events: none; }
+    .chrome--top { top: 0; padding: 14px var(--gutter); justify-content: space-between; }
+    .chrome--bottom { bottom: 0; padding: 13px var(--gutter); justify-content: space-between; }
+
+    .brand {
+      font-family: var(--font-display); font-weight: 700; font-size: 13px;
+      letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--clr-gray-muted);
+      transition: opacity .2s ease;
+    }
+
+    body.sheet-mode .brand { opacity: 0; }
+
+    .counter { font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: var(--ls-meta); color: var(--clr-gray-muted); font-variant-numeric: tabular-nums; }
+    .counter__now { color: var(--clr-ink); font-weight: 700; }
+
+    .nav { display: flex; gap: 9px; pointer-events: auto; }
+    .nav button {
+      font-family: var(--font-sans); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--clr-ink); background: transparent;
+      border: 1px solid var(--clr-gray-border); padding: 8px 16px; cursor: pointer; transition: 0.2s ease;
+    }
+    .nav button:hover { background: var(--clr-ink); color: #fff; border-color: var(--clr-ink); }
+    .nav button:focus-visible { outline: 2px solid var(--clr-orange); outline-offset: 2px; }
+    .hint { font-size: 11.5px; color: var(--clr-gray-muted); }
+
+    /* The chrome sits outside the slides, so dark-slide legibility is driven by a
+       body class rather than a .slide--dark descendant selector. */
+    body.dark-mode .brand { color: rgba(255,255,255,.55); }
+    body.dark-mode .counter { color: rgba(255,255,255,.55); }
+    body.dark-mode .counter__now { color: #fff; }
+    body.dark-mode .hint { color: rgba(255,255,255,.5); }
+    body.dark-mode .nav button { color: #fff; border-color: rgba(255,255,255,.3); }
+    body.dark-mode .nav button:hover { background: #fff; color: var(--clr-ink); border-color: #fff; }
+
+    .progress { position: fixed; left: 0; bottom: 0; height: 3px; background: var(--clr-orange); width: 0; z-index: 20; transition: width .25s ease; }
+
+    /* ── Speaker notes ─────────────────────────────────────── */
+
+    .notes {
+      display: none; position: fixed; left: 0; right: 0; bottom: 0;
+      max-height: 38vh; overflow-y: auto;
+      background: var(--clr-ink); color: #E7E7EE;
+      padding: 20px var(--gutter) 26px; font-size: 13.5px; line-height: 1.55;
+      z-index: 30; border-top: 3px solid var(--clr-orange);
+    }
+
+    body.notes-on .notes.is-active { display: block; }
+    .notes strong { color: var(--clr-orange); }
+    .notes p { margin: 0 0 9px; }
+    .notes p:last-child { margin-bottom: 0; }
+
+    /* ── Print ─────────────────────────────────────────────── */
+
+    @page { size: landscape; margin: 0; }
+
+    @media print {
+      html, body { overflow: visible; height: auto; }
+      .chrome, .progress, .notes { display: none !important; }
+      .deck { position: static; height: auto; }
+      .slide { display: flex !important; position: relative; inset: auto; width: 100%; height: 100vh; page-break-after: always; break-after: page; }
+      .slide:last-child { page-break-after: auto; break-after: auto; }
+    }
+
+    /* ── Small screens ─────────────────────────────────────── */
+
+    @media (max-width: 900px) {
+      .stepgrid, .stepgrid--narrow, .split, .licences { grid-template-columns: 1fr; }
+      .phases { grid-template-columns: 1fr 1fr; }
+      .checklist { grid-auto-flow: row; grid-template-columns: 1fr; grid-template-rows: none; }
+      .slide { justify-content: flex-start; padding-top: clamp(64px, 11vh, 88px); overflow-y: auto; }
+      .hint { display: none; }
+      .thumbs { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ══════════ 01 · TITLE ══════════ -->
+  <section class="slide slide--dark is-active" data-title="Title">
+    <div class="slide__inner">
+      <p class="eyebrow">Internal process playbook</p>
+      <h1 class="slide__title">[TODO] the one-line promise of the <span class="accent">Astra + Elementor</span> process</h1>
+      <p class="lede">[TODO] Two or three sentences. What this deck teaches, who it is for, and what the client ends up with. Mirror the tone of the Gerotech lede: state the position, then the mechanism that makes it true.</p>
+      <div style="margin-top:28px;font-size:clamp(12px,.9vw,14px);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.55);line-height:2">
+        [TODO] Phase one &nbsp;·&nbsp; [TODO] Phase two &nbsp;·&nbsp; [TODO] Phase three
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p><strong>Open (45s).</strong> [TODO] One line on the hook, one line on the shape of the process.</p>
+      <p>[TODO] Speaker notes per slide, same voice as speaker-notes.md in the Gerotech deck.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 02 · PROCESS AT A GLANCE ══════════ -->
+  <section class="slide" data-title="The process at a glance">
+    <div class="slide__inner">
+      <p class="eyebrow">The process at a glance</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">[TODO] N phases, in order.</h2>
+      <div class="phases">
+        <div class="phase"><span class="phase__num">01</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
+        <div class="phase"><span class="phase__num">02</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
+        <div class="phase"><span class="phase__num">03</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
+        <div class="phase"><span class="phase__num">04</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
+        <div class="phase"><span class="phase__num">05</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
+        <div class="phase"><span class="phase__num">06</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
+        <div class="phase"><span class="phase__num">07</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
+        <div class="phase" aria-hidden="true"></div>
+      </div>
+      <div class="callout">
+        <span class="callout__label">Use it when</span>
+        <p class="callout__text">[TODO] The condition that makes this process the right one — as opposed to a bespoke code build.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p><strong>Walk the phases</strong> — one line each. This is the map; the rest of the deck is the detail.</p>
+      <p>[TODO] Which phases are the ones teams skip, and what skipping them costs.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 03 · FULL-BLEED SHEET ══════════ -->
+  <section class="slide slide--sheet" data-title="[TODO] sheet title">
+    <div class="sheetimg">
+      <img src="images/elementor-editor.png" alt="[TODO] describe the screenshot for screen readers" />
+    </div>
+    <div class="notes" data-notes>
+      <p>[TODO] Full-bleed screenshot. Brand label hides automatically on sheet slides.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 04 · FIGURE + GUIDE (workhorse) ══════════ -->
+  <section class="slide slide--sheet slide--card" data-title="[TODO] phase title">
+    <div class="slide__inner">
+      <div class="stepgrid">
+        <div>
+          <p class="eyebrow">[TODO] Phase N — phase name</p>
+          <h2 class="slide__title">[TODO] The claim this phase defends.</h2>
+          <div class="stepgrid" style="grid-template-columns:1fr;gap:14px;margin-top:clamp(16px,2.4vh,24px)">
+            <ul class="bullets">
+              <li>[TODO] First point, with <strong>the thing that matters</strong> emphasised.</li>
+              <li>[TODO] Second point.</li>
+              <li>[TODO] Third point — the one the client will ask about.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="guide">
+          <h3>[TODO] In the editor</h3>
+          <ul class="bullets">
+            <li>[TODO] Where this lives in Elementor or the Astra customiser.</li>
+            <li>[TODO] The setting the client will actually touch.</li>
+          </ul>
+          <div class="proof">
+            <span>[TODO] Proof</span>
+            <p>[TODO] The concrete, checkable claim. No adjectives.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>[TODO] The workhorse layout: claim on the left, editor detail and a proof point on the right.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 05 · FIGURE + BULLETS ══════════ -->
+  <section class="slide" data-title="[TODO] phase title">
+    <div class="slide__inner">
+      <p class="eyebrow">[TODO] Phase N — phase name</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">[TODO] Screenshot left, explanation right.</h2>
+      <div class="stepgrid" style="margin-top:clamp(18px,2.6vh,28px)">
+        <figure class="shot" style="margin:0">
+          <img src="images/elementor-editor.png" alt="[TODO] describe the screenshot" />
+          <figcaption>[TODO] Caption: what the screenshot is showing, and where to look.</figcaption>
+        </figure>
+        <div class="guide">
+          <h3>[TODO] What to notice</h3>
+          <ul class="bullets">
+            <li>[TODO] Point with a <strong>specific</strong> detail — a value, a name, a location.</li>
+            <li>[TODO] Second point.</li>
+            <li>[TODO] Third point.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>[TODO] Screenshot carries the evidence; the bullets only name what to look at.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 06 · THUMB STRIP ══════════ -->
+  <section class="slide slide--card" data-title="[TODO] every page, one system">
+    <div class="slide__inner">
+      <p class="eyebrow">[TODO] Consistency</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">[TODO] Every page, one system.</h2>
+      <p class="lede">[TODO] One sentence on why consistency is cheaper to maintain than variety.</p>
+      <div class="thumbs thumbs--uniform">
+        <figure class="shot" style="margin:0"><img src="images/elementor-editor.png" alt="[TODO]" /><figcaption>[TODO] Page</figcaption></figure>
+        <figure class="shot" style="margin:0"><img src="images/elementor-editor.png" alt="[TODO]" /><figcaption>[TODO] Page</figcaption></figure>
+        <figure class="shot" style="margin:0"><img src="images/elementor-editor.png" alt="[TODO]" /><figcaption>[TODO] Page</figcaption></figure>
+        <figure class="shot" style="margin:0"><img src="images/elementor-editor.png" alt="[TODO]" /><figcaption>[TODO] Page</figcaption></figure>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>[TODO] Four screenshots at uniform crop height. <code>thumbs--uniform</code> keeps them level.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 07 · CHECKLIST ══════════ -->
+  <section class="slide slide--sheet slide--card" data-title="[TODO] checklist title">
+    <div class="slide__inner">
+      <p class="eyebrow">[TODO] Handover</p>
+      <h2 class="slide__title">[TODO] Ten things the client owns on day one.</h2>
+      <ul class="checklist">
+        <li>[TODO] Editable field</li>
+        <li>[TODO] Editable field</li>
+        <li>[TODO] Editable field</li>
+        <li>[TODO] Editable field</li>
+        <li>[TODO] Editable field</li>
+        <li>[TODO] Editable field</li>
+        <li>[TODO] Editable field</li>
+        <li>[TODO] Editable field</li>
+        <li>[TODO] Editable field</li>
+        <li>[TODO] Editable field</li>
+      </ul>
+    </div>
+    <div class="notes" data-notes>
+      <p>[TODO] Ten items, two columns of five — the grid is set for exactly that.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 08 · COMPARISON TABLE ══════════ -->
+  <section class="slide" data-title="[TODO] comparison title">
+    <div class="slide__inner">
+      <p class="eyebrow">[TODO] Trade-offs</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">[TODO] Where the page builder wins, and where it costs you.</h2>
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr><th>[TODO] Concern</th><th>[TODO] With Elementor</th><th>[TODO] The trade-off</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
+            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
+            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
+            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
+            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <span class="callout__label">The line</span>
+        <p class="callout__text">[TODO] The decision rule: when to stay in the builder, when to drop to custom code or a different build target.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>[TODO] Be even-handed. Naming the cost is what makes the recommendation credible.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 09 · STATS ══════════ -->
+  <section class="slide slide--card" data-title="[TODO] numbers title">
+    <div class="slide__inner">
+      <p class="eyebrow">[TODO] By the numbers</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">[TODO] What the client ends up holding.</h2>
+      <div class="stat-row">
+        <div class="stat"><span class="stat__value">[TODO]</span><span class="stat__label">[TODO]</span></div>
+        <div class="stat"><span class="stat__value">[TODO]</span><span class="stat__label">[TODO]</span></div>
+        <div class="stat"><span class="stat__value">[TODO]</span><span class="stat__label">[TODO]</span></div>
+        <div class="stat"><span class="stat__value">[TODO]</span><span class="stat__label">[TODO]</span></div>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>[TODO] Every number must be checkable. <code>auto-fit</code> means 3 or 5 stats both lay out correctly.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 10 · SPLIT ══════════ -->
+  <section class="slide slide--dark" data-title="[TODO] split title">
+    <div class="slide__inner">
+      <p class="eyebrow">[TODO] Two paths</p>
+      <h2 class="slide__title">[TODO] The same process, two different build targets.</h2>
+      <div class="split" style="margin-top:clamp(18px,2.6vh,30px)">
+        <div>
+          <h3 class="split__head">[TODO] Path A</h3>
+          <ul class="bullets">
+            <li>[TODO] Point</li>
+            <li>[TODO] Point</li>
+            <li>[TODO] Point</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="split__head">[TODO] Path B</h3>
+          <ul class="bullets">
+            <li>[TODO] Point</li>
+            <li>[TODO] Point</li>
+            <li>[TODO] Point</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">
+        <span class="callout__label">The point</span>
+        <p class="callout__text">[TODO] What stays constant regardless of which path the client takes.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>[TODO] Dark slide — the chrome inverts automatically via the <code>dark-mode</code> body class.</p>
+    </div>
+  </section>
+
+</div><!-- /.deck -->
+
+<div class="chrome chrome--top">
+  <span class="brand">[TODO] Brand · Process Playbook</span>
+  <span class="counter"><span class="counter__now" id="counterNow">01</span> / <span id="counterTotal">10</span></span>
+</div>
+
+<div class="chrome chrome--bottom">
+  <span class="hint">← → to navigate · N for notes · P to print</span>
+  <div class="nav">
+    <button type="button" id="btnPrev" aria-label="Previous slide">Prev</button>
+    <button type="button" id="btnNext" aria-label="Next slide">Next</button>
+  </div>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var index = 0;
+
+  var counterNow = document.getElementById('counterNow');
+  var counterTotal = document.getElementById('counterTotal');
+  var progress = document.getElementById('progress');
+
+  counterTotal.textContent = total < 10 ? '0' + total : String(total);
+
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  function show(n, push) {
+    index = Math.max(0, Math.min(total - 1, n));
+
+    slides.forEach(function (slide, i) {
+      var active = i === index;
+      slide.classList.toggle('is-active', active);
+      var notes = slide.querySelector('.notes');
+      if (notes) notes.classList.toggle('is-active', active);
+    });
+
+    document.body.classList.toggle('sheet-mode', slides[index].classList.contains('slide--sheet'));
+    document.body.classList.toggle('dark-mode', slides[index].classList.contains('slide--dark'));
+
+    counterNow.textContent = pad(index + 1);
+    progress.style.width = ((index + 1) / total * 100) + '%';
+
+    if (push !== false) {
+      try { history.replaceState(null, '', '#slide-' + (index + 1)); } catch (e) {}
+    }
+  }
+
+  function next() { show(index + 1); }
+  function prev() { show(index - 1); }
+
+  document.getElementById('btnNext').addEventListener('click', next);
+  document.getElementById('btnPrev').addEventListener('click', prev);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+    switch (e.key) {
+      case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+        e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+        e.preventDefault(); prev(); break;
+      case 'Home': e.preventDefault(); show(0); break;
+      case 'End': e.preventDefault(); show(total - 1); break;
+      case 'n': case 'N': document.body.classList.toggle('notes-on'); break;
+      case 'p': case 'P': window.print(); break;
+    }
+  });
+
+  var startX = null;
+  document.addEventListener('touchstart', function (e) { startX = e.changedTouches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (startX === null) return;
+    var dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 60) { dx < 0 ? next() : prev(); }
+    startX = null;
+  }, { passive: true });
+
+  var hash = window.location.hash.match(/slide-(\d+)/);
+  show(hash ? parseInt(hash[1], 10) - 1 : 0, false);
+})();
+</script>
+
+</body>
+</html>

@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Astra + Elementor — Process Playbook</title>
-  <meta name="description" content="Scaffold deck. The Astra + Elementor build process, taught as a walkthrough. Content pending outline." />
+  <title>When the Template Picks the Design — Astra + Elementor Process Playbook</title>
+  <meta name="description" content="The process for a fixed theme and page builder: pick the starter first, map the sitemap and wireframes to it in code, bring the design up to the content, hand off the constraints. Five phases, taught from a 15-page non-profit rebuild." />
 
   <link rel="stylesheet" href="https://use.typekit.net/lqh7ybe.css" />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     /* ============================================================
-       ASTRA + ELEMENTOR PROCESS PLAYBOOK — scaffold
-       Same design system as the Gerotech deck. Content pending.
+       ASTRA + ELEMENTOR PROCESS PLAYBOOK — five phases
+       Built on the project's own design system (tokens + type).
+       Sibling of gerotech-process-playbook.html.
        ============================================================ */
 
     :root {
@@ -30,9 +31,12 @@
       --clr-gray-card:    #F9F9FB;
       --clr-gray-band:    #F2F2F2;
       --clr-white:        #FFFFFF;
+      --clr-yes:          #2E7D32;
+      --clr-no:           #B3261E;
 
       --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
       --font-sans: 'navigo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
       --ls-caps: 0.14em;
       --ls-meta: 0.08em;
@@ -128,6 +132,127 @@
     .slide--dark .bullets li { color: #CFCFD8; }
     .slide--dark .bullets li strong { color: var(--clr-white); }
 
+    /* ── Two-column keep / placeholder split ───────────────── */
+
+    .duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 2.6vw, 40px); margin-top: clamp(16px, 2.4vh, 26px); }
+
+    .duo__col { border-top: 3px solid var(--clr-gray-border); padding-top: 13px; }
+    .duo__col--keep { border-top-color: var(--clr-orange); }
+    .duo__col--drop { border-top-color: var(--clr-gray-muted); }
+    .duo__head {
+      font-family: var(--font-display); font-weight: 600; font-size: clamp(17px, 1.3vw, 21px);
+      margin: 0 0 4px; color: var(--clr-ink);
+    }
+    .duo__note { font-size: clamp(11px, 0.8vw, 12.5px); line-height: 1.45; color: var(--clr-gray-muted); margin: 0 0 12px; }
+    .duo__col ul { list-style: none; margin: 0; padding: 0; }
+    .duo__col li {
+      position: relative; padding: 0 0 0 22px; margin: 0 0 8px;
+      font-size: clamp(12.5px, 0.94vw, 14.5px); line-height: 1.45; color: var(--clr-gray-body);
+    }
+    .duo__col li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 12px; height: 2px; background: var(--clr-orange); }
+    .duo__col--drop li::before { background: var(--clr-gray-muted); }
+
+    /* ── Schematic: three-panel authority / tier split ─────── */
+
+    .panel {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px;
+      background: var(--clr-gray-border); border: 1px solid var(--clr-gray-border);
+      margin-top: clamp(16px, 2.4vh, 26px);
+    }
+
+    .panel__col { background: var(--clr-white); padding: clamp(13px, 1.7vh, 19px) clamp(14px, 1.5vw, 20px); }
+    .slide--card .panel__col { background: var(--clr-gray-card); }
+    .panel__col ul { list-style: none; margin: 0; padding: 0; }
+    .panel__col li {
+      position: relative; padding: 0 0 0 17px; margin: 0 0 7px;
+      font-size: clamp(11.5px, 0.87vw, 13.5px); line-height: 1.45; color: var(--clr-gray-body);
+    }
+    .panel__col li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 9px; height: 2px; background: var(--clr-orange); }
+    .panel__tag {
+      display: block; margin-bottom: 5px; font-size: 9.5px; font-weight: 700;
+      letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--clr-gray-muted);
+    }
+    .panel__head { font-family: var(--font-display); font-weight: 600; font-size: clamp(17px, 1.35vw, 22px); line-height: 1.1; margin: 0 0 11px; color: var(--clr-ink); }
+    .panel__col--owns .panel__head { color: var(--clr-orange-deep); }
+    .panel__col--owns { box-shadow: inset 0 0 0 2px var(--clr-orange); }
+
+    /* ── Schematic: starter remap ──────────────────────────── */
+
+    .remap { margin-top: clamp(14px, 2.2vh, 24px); }
+    .remap__row { display: grid; grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1.25fr); align-items: stretch; border: 1px solid var(--clr-gray-border); border-bottom: 0; background: var(--clr-white); }
+    .remap__row:last-child { border-bottom: 1px solid var(--clr-gray-border); }
+    .remap__from, .remap__to { display: flex; align-items: center; gap: 10px; padding: 9px 15px; }
+    .remap__from { font-size: clamp(12px, 0.9vw, 14px); color: var(--clr-gray-body); }
+    .remap__to { font-size: clamp(12px, 0.9vw, 14px); color: var(--clr-ink); font-weight: 700; }
+    .remap__arrow { display: flex; align-items: center; justify-content: center; color: var(--clr-orange); font-size: 15px; font-weight: 700; }
+    .remap__x { font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--clr-orange-deep); white-space: nowrap; }
+    .remap__foot { margin-top: 10px; font-size: clamp(11.5px, 0.85vw, 13px); line-height: 1.5; color: var(--clr-gray-muted); }
+    .remap__foot strong { color: var(--clr-ink); }
+
+    /* ── Schematic: page tree ───────────────────────────────── */
+
+    .tree { margin-top: clamp(14px, 2.2vh, 24px); }
+    .tree ul { list-style: none; margin: 0; padding: 0; }
+    .tree > ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(24px, 3vw, 48px); }
+    .tree__item { display: flex; align-items: baseline; gap: 9px; padding: 4px 0; position: relative; }
+    .tree__item::before {
+      content: ""; position: absolute; left: -13px; top: 0; bottom: 0;
+      border-left: 1px solid var(--clr-gray-border);
+    }
+    .tree__item--child { padding-left: 18px; }
+    .tree__item--child::before { display: none; }
+    .tree__name { font-size: clamp(12.5px, 0.94vw, 14.5px); line-height: 1.35; color: var(--clr-ink); }
+    .tree__item--child .tree__name { color: var(--clr-gray-body); font-weight: 400; font-size: clamp(11.5px, 0.86vw, 13px); }
+    .tree__slug { font-family: var(--font-mono); font-size: 10.5px; color: var(--clr-gray-muted); white-space: nowrap; }
+    .tree__mark { font-size: 9px; font-weight: 700; letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--clr-orange-deep); white-space: nowrap; }
+    .tree__mark--cut { color: var(--clr-no); }
+    .tree__mark--util { color: var(--clr-gray-muted); }
+
+    /* ── Schematic: change ladder ───────────────────────────── */
+
+    .ladder { margin-top: clamp(14px, 2.2vh, 24px); border: 1px solid var(--clr-gray-border); background: var(--clr-gray-border); display: grid; gap: 1px; }
+    .rung { display: grid; grid-template-columns: minmax(140px, 0.24fr) minmax(0, 1fr); gap: clamp(14px, 1.8vw, 32px); align-items: start; background: var(--clr-white); padding: clamp(12px, 1.6vh, 18px) clamp(15px, 1.7vw, 24px); }
+    .rung__label { font-family: var(--font-display); font-weight: 700; font-size: clamp(12.5px, 1vw, 15.5px); letter-spacing: var(--ls-meta); text-transform: uppercase; line-height: 1.2; padding-top: 2px; }
+    .rung__note { display: block; font-family: var(--font-sans); font-size: 10.5px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--clr-gray-muted); margin-top: 5px; line-height: 1.35; }
+    .rung--free .rung__label { color: var(--clr-yes); }
+    .rung--call .rung__label { color: var(--clr-orange-deep); }
+    .rung--never .rung__label { color: var(--clr-no); }
+    .rung__list { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: clamp(20px, 2.2vw, 34px); }
+    .rung__list li { break-inside: avoid; -webkit-column-break-inside: avoid; position: relative; padding: 0 0 0 15px; margin: 0 0 6px; font-size: clamp(11.5px, 0.87vw, 13.5px); line-height: 1.4; color: var(--clr-gray-body); }
+    .rung__list li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 8px; height: 2px; background: var(--clr-gray-muted); }
+    .rung--call .rung__list li::before { background: var(--clr-orange); }
+    .rung--never .rung__list li::before { background: var(--clr-no); }
+
+    /* ── Schematic: design-file canvas pipeline ────────────── */
+
+    .canvases { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1px; background: var(--clr-gray-border); border: 1px solid var(--clr-gray-border); margin-top: clamp(14px, 2.2vh, 22px); }
+    .canvas { background: var(--clr-white); padding: clamp(11px, 1.5vh, 16px) clamp(12px, 1.2vw, 16px); display: flex; flex-direction: column; }
+    .canvas__name { font-family: var(--font-mono); font-size: 10.5px; color: var(--clr-ink); margin-bottom: 5px; word-break: break-word; }
+    .canvas__what { font-size: clamp(10.5px, 0.8vw, 12.5px); line-height: 1.4; color: var(--clr-gray-body); }
+    .canvas__w { margin-top: 7px; font-size: 9.5px; font-weight: 700; letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--clr-gray-muted); }
+    .canvas--wip { box-shadow: inset 0 0 0 2px var(--clr-orange); }
+    .canvas--wip .canvas__name { color: var(--clr-orange-deep); }
+    .canvas--done .canvas__name { color: var(--clr-yes); }
+    .canvas--bin { background: var(--clr-gray-band); }
+    .canvas--bin .canvas__name { color: var(--clr-gray-muted); text-decoration: line-through; }
+    .canvas__note { margin-top: 9px; font-size: clamp(11px, 0.82vw, 12.5px); line-height: 1.5; color: var(--clr-gray-muted); }
+    .canvas__note strong { color: var(--clr-ink); }
+
+    /* ── Callout ───────────────────────────────────────────── */
+
+    .callout {
+      display: flex; gap: 16px; align-items: flex-start;
+      margin-top: clamp(16px, 2.4vh, 28px);
+      padding: clamp(14px, 1.8vh, 20px) clamp(18px, 1.8vw, 26px);
+      background: var(--clr-orange-tint); border-left: 4px solid var(--clr-orange); max-width: 92ch;
+    }
+
+    .callout__label { flex: none; font-size: 10.5px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--clr-orange-deep); padding-top: 3px; white-space: nowrap; }
+    .callout__text { margin: 0; font-size: clamp(14px, 1.05vw, 17px); line-height: 1.45; color: var(--clr-ink); }
+    .slide--dark .callout { background: rgba(243,138,44,.14); }
+    .slide--dark .callout__text { color: #fff; }
+    .slide--dark .callout__label { color: var(--clr-orange); }
+
     /* ── Figure + guide ────────────────────────────────────── */
 
     .stepgrid {
@@ -136,8 +261,6 @@
     }
 
     .stepgrid--narrow { grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.5fr); }
-    /* a portrait phone shot would otherwise drive the slide height */
-    .stepgrid--narrow .shot img { max-height: 520px; width: auto; margin: 0 auto; }
 
     .shot { background: #fff; border: 1px solid var(--clr-gray-border); overflow: hidden; }
     .shot img { display: block; width: 100%; height: auto; }
@@ -151,12 +274,6 @@
     .proof { margin-top: 20px; padding: 14px 16px; background: var(--clr-orange-tint); border-left: 4px solid var(--clr-orange); }
     .proof span { display: block; font-size: 10px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--clr-orange-deep); margin-bottom: 6px; }
     .proof p { margin: 0; font-size: clamp(13px, 0.95vw, 15px); line-height: 1.5; color: var(--clr-ink); }
-
-    /* ── Thumb strip ───────────────────────────────────────── */
-
-    .thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
-    .thumbs .shot figcaption { font-size: 10.5px; padding: 6px 9px; }
-    .thumbs--uniform .shot img { height: 168px; object-fit: cover; object-position: top center; }
 
     /* ── Phase map ─────────────────────────────────────────── */
 
@@ -199,13 +316,15 @@
     }
     table.data td { padding: 11px 14px 11px 0; border-bottom: 1px solid var(--clr-gray-border); vertical-align: top; color: var(--clr-gray-body); }
     table.data td:first-child { color: var(--clr-ink); font-weight: 700; }
-    .fix { color: var(--clr-ink); }
-    .fix__pri { display: inline-block; min-width: 18px; font-weight: 700; color: var(--clr-orange-deep); }
-    .status {
-      display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: var(--ls-meta);
-      text-transform: uppercase; padding: 4px 8px; white-space: nowrap;
-      background: var(--clr-orange-tint); color: var(--clr-orange-deep);
-    }
+    .verdict { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: var(--ls-meta); text-transform: uppercase; padding: 4px 8px; white-space: nowrap; }
+    .verdict--yes { background: rgba(46,125,50,.12); color: var(--clr-yes); }
+    .verdict--no { background: rgba(179,38,30,.10); color: var(--clr-no); }
+
+    /* ── Step list (build order) ────────────────────────────── */
+
+    .steps { list-style: none; counter-reset: step; margin: clamp(14px, 2.2vh, 24px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(24px, 3vw, 48px); }
+    .steps li { counter-increment: step; position: relative; padding: 8px 0 8px 34px; border-bottom: 1px solid var(--clr-gray-border); font-size: clamp(12.5px, 0.94vw, 14.5px); line-height: 1.4; color: var(--clr-gray-body); }
+    .steps li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 0; top: 8px; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: var(--clr-orange-deep); letter-spacing: var(--ls-meta); }
 
     /* ── Licence payoff ────────────────────────────────────── */
 
@@ -216,41 +335,6 @@
     .lic--kept .lic__tag { background: var(--clr-orange); }
     .lic h4 { font-family: var(--font-display); font-weight: 600; font-size: clamp(18px, 1.45vw, 23px); margin: 0 0 8px; color: var(--clr-ink); }
     .lic p { font-size: clamp(12.5px, 0.92vw, 14.5px); line-height: 1.5; color: var(--clr-gray-body); margin: 0; }
-
-    /* ── Callout ───────────────────────────────────────────── */
-
-    .callout {
-      display: flex; gap: 16px; align-items: flex-start;
-      margin-top: clamp(16px, 2.4vh, 28px);
-      padding: clamp(14px, 1.8vh, 20px) clamp(18px, 1.8vw, 26px);
-      background: var(--clr-orange-tint); border-left: 4px solid var(--clr-orange); max-width: 92ch;
-    }
-
-    .callout__label { flex: none; font-size: 10.5px; font-weight: 700; letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--clr-orange-deep); padding-top: 3px; white-space: nowrap; }
-    .callout__text { margin: 0; font-size: clamp(14px, 1.05vw, 17px); line-height: 1.45; color: var(--clr-ink); }
-    .slide--dark .callout { background: rgba(243,138,44,.14); }
-    .slide--dark .callout__text { color: #fff; }
-    .slide--dark .callout__label { color: var(--clr-orange); }
-
-    /* ── Stats ─────────────────────────────────────────────── */
-
-    .stat-row {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 1px; background: var(--clr-gray-border);
-      border-top: 1px solid var(--clr-gray-border); border-bottom: 1px solid var(--clr-gray-border);
-      margin-top: clamp(18px, 2.6vh, 30px);
-    }
-
-    .stat { background: var(--clr-white); padding: clamp(16px, 2.1vh, 24px) 18px; }
-    .slide--card .stat { background: var(--clr-gray-card); }
-    .stat__value { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 2.6vw, 40px); line-height: 1; letter-spacing: -0.01em; color: var(--clr-ink); display: block; margin-bottom: 7px; }
-    .stat__label { font-size: clamp(10px, 0.76vw, 12px); font-weight: 700; letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--clr-gray-body); line-height: 1.4; display: block; }
-
-    /* ── Split ─────────────────────────────────────────────── */
-
-    .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: clamp(24px, 3.4vw, 56px); }
-    .split__head { font-family: var(--font-display); font-weight: 600; font-size: clamp(19px, 1.5vw, 25px); margin: 0 0 12px; color: var(--clr-ink); }
-    .slide--dark .split__head { color: var(--clr-white); }
 
     /* ── Deck chrome ───────────────────────────────────────── */
 
@@ -305,6 +389,7 @@
     .notes strong { color: var(--clr-orange); }
     .notes p { margin: 0 0 9px; }
     .notes p:last-child { margin-bottom: 0; }
+    .notes code { font-family: var(--font-mono); font-size: 12px; background: rgba(255,255,255,.09); padding: 1px 5px; }
 
     /* ── Print ─────────────────────────────────────────────── */
 
@@ -320,13 +405,21 @@
 
     /* ── Small screens ─────────────────────────────────────── */
 
+    @media (max-width: 1100px) {
+      .tree > ul { grid-template-columns: 1fr; }
+      .rung { grid-template-columns: 1fr; gap: 8px; }
+      .rung__list { columns: 1; }
+    }
+
     @media (max-width: 900px) {
-      .stepgrid, .stepgrid--narrow, .split, .licences { grid-template-columns: 1fr; }
+      .stepgrid, .stepgrid--narrow, .duo, .licences, .panel { grid-template-columns: 1fr; }
+      .canvases { grid-template-columns: repeat(2, 1fr); }
       .phases { grid-template-columns: 1fr 1fr; }
       .checklist { grid-auto-flow: row; grid-template-columns: 1fr; grid-template-rows: none; }
+      .steps { grid-template-columns: 1fr; }
+      .remap__row { grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1.1fr); }
       .slide { justify-content: flex-start; padding-top: clamp(64px, 11vh, 88px); overflow-y: auto; }
       .hint { display: none; }
-      .thumbs { grid-template-columns: 1fr 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
@@ -340,242 +433,711 @@
   <section class="slide slide--dark is-active" data-title="Title">
     <div class="slide__inner">
       <p class="eyebrow">Internal process playbook</p>
-      <h1 class="slide__title">[TODO] the one-line promise of the <span class="accent">Astra + Elementor</span> process</h1>
-      <p class="lede">[TODO] Two or three sentences. What this deck teaches, who it is for, and what the client ends up with. Mirror the tone of the Gerotech lede: state the position, then the mechanism that makes it true.</p>
+      <h1 class="slide__title">When the <span class="accent">template</span> picks the design</h1>
+      <p class="lede">The starter theme is imported first, and it decides how the site looks. The sitemap and the wireframes are then built in code to map it, the design is brought up to the content, and the build inherits the constraints. Five phases, taught from a fifteen-page non-profit rebuild.</p>
       <div style="margin-top:28px;font-size:clamp(12px,.9vw,14px);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.55);line-height:2">
-        [TODO] Phase one &nbsp;·&nbsp; [TODO] Phase two &nbsp;·&nbsp; [TODO] Phase three
+        Theme &amp; starter &nbsp;·&nbsp; Sitemap in code &nbsp;·&nbsp; Wireframes in code &nbsp;·&nbsp; Design &nbsp;·&nbsp; Hand off
       </div>
     </div>
     <div class="notes" data-notes>
-      <p><strong>Open (45s).</strong> [TODO] One line on the hook, one line on the shape of the process.</p>
-      <p>[TODO] Speaker notes per slide, same voice as speaker-notes.md in the Gerotech deck.</p>
+      <p><strong>Open (45s).</strong> This is the sibling of the code-first deck. Same agency, same wireframes-in-code instinct — but the design authority sits with a template we do not own.</p>
+      <p>Land the inversion early: <strong>on a bespoke build you own the design system, so an idea is just work. Here you rent one.</strong></p>
     </div>
   </section>
 
-  <!-- ══════════ 02 · PROCESS AT A GLANCE ══════════ -->
+  <!-- ══════════ 02 · THE PREMISE ══════════ -->
+  <section class="slide slide--dark" data-title="The premise">
+    <div class="slide__inner">
+      <p class="eyebrow">The premise</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">The template is the design system. <span class="accent">You don't own it.</span></h2>
+      <p class="lede">One starter, imported once onto a clean staging site, and every page is a copy-and-reskin of a layout that already exists. The catalogue of possible designs is fixed before the first conversation with the client.</p>
+      <div class="callout">
+        <span class="callout__label">The consequence</span>
+        <p class="callout__text">Most design ideas on a build like this are answered by the same sentence: <strong>"that's not a section the starter has."</strong> The process below exists to get that answer early, cheaply, and in agreement — rather than three rounds into design.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>Contrast with the bespoke deck: there, "we can't build that" means "that's expensive." Here it means "that's off the table." Different sentence, different process.</p>
+      <p>If the client is ever going to be unhappy about a missing layout, better they find out in week one than in week six.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 03 · WHO DECIDES WHAT ══════════ -->
+  <section class="slide" data-title="Who decides what">
+    <div class="slide__inner">
+      <p class="eyebrow">The whole method on one slide</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">Who decides what.</h2>
+      <div class="panel">
+        <div class="panel__col panel__col--owns">
+          <span class="panel__tag">Decides</span>
+          <h3 class="panel__head">The starter</h3>
+          <ul>
+            <li>How it looks</li>
+            <li>Which section patterns exist</li>
+            <li>Which layouts you may use</li>
+            <li>What would need custom code</li>
+            <li>The palette, type and spacing scale</li>
+          </ul>
+        </div>
+        <div class="panel__col">
+          <span class="panel__tag">Decides</span>
+          <h3 class="panel__head">The wire</h3>
+          <ul>
+            <li>What pages exist</li>
+            <li>What each page says</li>
+            <li>Which URLs to use</li>
+            <li>Section order and hierarchy</li>
+            <li>What stays a section</li>
+          </ul>
+        </div>
+        <div class="panel__col">
+          <span class="panel__tag">Inherits</span>
+          <h3 class="panel__head">The build</h3>
+          <ul>
+            <li>Everything above, unchanged</li>
+            <li>Globals set once, site-wide</li>
+            <li>Page canvases only</li>
+            <li>Duplicate, don't design</li>
+            <li>No new plugins without cause</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">
+        <span class="callout__label">Ask first</span>
+        <p class="callout__text">Every design idea starts with one question: <strong>which existing starter section is this?</strong> If you can point at one, it's cheap and you build it. If you can't, it needs a decision before anyone draws it.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>This is the slide to linger on. Everything else in the deck is a consequence of keeping those three columns in their lanes.</p>
+      <p>The orange outline is deliberate: the starter is the one holding authority. The wire looks like the thing you're building, but it isn't holding design decisions.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 04 · THE FIVE PHASES ══════════ -->
   <section class="slide" data-title="The process at a glance">
     <div class="slide__inner">
       <p class="eyebrow">The process at a glance</p>
       <div class="headline-rule"></div>
-      <h2 class="slide__title">[TODO] N phases, in order.</h2>
+      <h2 class="slide__title">Five phases, in order.</h2>
       <div class="phases">
-        <div class="phase"><span class="phase__num">01</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
-        <div class="phase"><span class="phase__num">02</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
-        <div class="phase"><span class="phase__num">03</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
-        <div class="phase"><span class="phase__num">04</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
-        <div class="phase"><span class="phase__num">05</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
-        <div class="phase"><span class="phase__num">06</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
-        <div class="phase"><span class="phase__num">07</span><span class="phase__name">[TODO]</span><span class="phase__why">[TODO] One line: what happens in this phase.</span></div>
+        <div class="phase"><span class="phase__num">01</span><span class="phase__name">Theme &amp; starter</span><span class="phase__why">Choose the template and import it before anything is drawn.</span></div>
+        <div class="phase"><span class="phase__num">02</span><span class="phase__name">Sitemap</span><span class="phase__why">Decide pages, sections and URLs, in code, against what the starter ships.</span></div>
+        <div class="phase"><span class="phase__num">03</span><span class="phase__name">Wireframes</span><span class="phase__why">Every page wired in plain HTML from the starter's own sections.</span></div>
+        <div class="phase"><span class="phase__num">04</span><span class="phase__name">Design</span><span class="phase__why">The design file is brought up to the content the wires settled.</span></div>
         <div class="phase" aria-hidden="true"></div>
+        <div class="phase" aria-hidden="true"></div>
+        <div class="phase" aria-hidden="true"></div>
+        <div class="phase"><span class="phase__num">05</span><span class="phase__name">Hand off</span><span class="phase__why">The build inherits the decisions and the constraints together.</span></div>
       </div>
+      <div class="canvases">
+        <div class="canvas"><span class="canvas__name">Inspiration</span><span class="canvas__what">Design system and references</span><span class="canvas__w">&nbsp;</span></div>
+        <div class="canvas"><span class="canvas__name">SiteMap</span><span class="canvas__what">Pages, sections and URLs</span><span class="canvas__w">&nbsp;</span></div>
+        <div class="canvas canvas--wip"><span class="canvas__name">⚠ Wireframes</span><span class="canvas__what">Structure, in code</span><span class="canvas__w">1920 wide</span></div>
+        <div class="canvas canvas--done"><span class="canvas__name">✅ Design</span><span class="canvas__what">Content brought up to the template</span><span class="canvas__w">1440 wide</span></div>
+        <div class="canvas canvas--bin"><span class="canvas__name">Bin</span><span class="canvas__what">Retired, including the template's own page</span><span class="canvas__w">&nbsp;</span></div>
+      </div>
+      <p class="canvas__note">This is the design file's own structure on a real project. The wireframes sit under a warning sign and the design under a tick — <strong>the file says which is provisional before anyone does.</strong></p>
       <div class="callout">
-        <span class="callout__label">Use it when</span>
-        <p class="callout__text">[TODO] The condition that makes this process the right one — as opposed to a bespoke code build.</p>
+        <span class="callout__label">It is a pipeline</span>
+        <p class="callout__text">Not a loop. Theme → sitemap → wireframes → design → handoff. Each phase narrows the next, and none of them goes backwards to reconsider design authority.</p>
       </div>
     </div>
     <div class="notes" data-notes>
-      <p><strong>Walk the phases</strong> — one line each. This is the map; the rest of the deck is the detail.</p>
-      <p>[TODO] Which phases are the ones teams skip, and what skipping them costs.</p>
+      <p>Call it a pipeline out loud. The instinct from the bespoke deck is to loop design and review repeatedly — here the loop happens <em>inside</em> phases 3 and 4, not across the whole process.</p>
+      <p>Phase 05 sits in a later grid cell deliberately, to read as the exit rather than a peer step.</p>
+      <p>The canvas row is real, not a diagram I invented — it's how the design file for the worked example is actually organised. Naming the warning sign and the tick is the useful bit: the naming convention is the process stating its own priorities.</p>
     </div>
   </section>
 
-  <!-- ══════════ 03 · FULL-BLEED SHEET ══════════ -->
-  <section class="slide slide--sheet" data-title="[TODO] sheet title">
-    <div class="sheetimg">
-      <img src="images/elementor-editor.png" alt="[TODO] describe the screenshot for screen readers" />
-    </div>
-    <div class="notes" data-notes>
-      <p>[TODO] Full-bleed screenshot. Brand label hides automatically on sheet slides.</p>
-    </div>
-  </section>
-
-  <!-- ══════════ 04 · FIGURE + GUIDE (workhorse) ══════════ -->
-  <section class="slide slide--sheet slide--card" data-title="[TODO] phase title">
+  <!-- ══════════ 05 · PHASE 01 ══════════ -->
+  <section class="slide" data-title="Phase 1 — Theme and starter">
     <div class="slide__inner">
-      <div class="stepgrid">
-        <div>
-          <p class="eyebrow">[TODO] Phase N — phase name</p>
-          <h2 class="slide__title">[TODO] The claim this phase defends.</h2>
-          <div class="stepgrid" style="grid-template-columns:1fr;gap:14px;margin-top:clamp(16px,2.4vh,24px)">
-            <ul class="bullets">
-              <li>[TODO] First point, with <strong>the thing that matters</strong> emphasised.</li>
-              <li>[TODO] Second point.</li>
-              <li>[TODO] Third point — the one the client will ask about.</li>
-            </ul>
-          </div>
-        </div>
+      <p class="eyebrow">Phase 01 — Theme and starter</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">Import before you draw.</h2>
+      <div class="stepgrid" style="margin-top:clamp(18px,2.6vh,28px)">
+        <ul class="bullets">
+          <li>One starter, one import, onto a <strong>clean staging site</strong>. Never onto a site that already has pages.</li>
+          <li>Choose on <strong>what's in the box</strong>, not on how the demo looks. Count the layouts against the page inventory before you commit.</li>
+          <li>The starter constrains every later decision, so choose it <strong>before the sitemap</strong> — not after the structure is agreed.</li>
+          <li>Don't mix starters. A second import is how projects get quietly stuck.</li>
+          <li>Decline the plugins the starter bundles unless the client is genuinely taking payments or bookings on site.</li>
+        </ul>
         <div class="guide">
-          <h3>[TODO] In the editor</h3>
+          <h3>Why 04 won</h3>
           <ul class="bullets">
-            <li>[TODO] Where this lives in Elementor or the Astra customiser.</li>
-            <li>[TODO] The setting the client will actually touch.</li>
+            <li>Ships six page layouts</li>
+            <li>Enough to <strong>duplicate</strong> across fifteen pages</li>
+            <li>No new templates needed</li>
           </ul>
           <div class="proof">
-            <span>[TODO] Proof</span>
-            <p>[TODO] The concrete, checkable claim. No adjectives.</p>
+            <span>The test</span>
+            <p>Could the page inventory be covered by duplicating what already ships? If not, it's the wrong starter — keep looking.</p>
           </div>
         </div>
       </div>
     </div>
     <div class="notes" data-notes>
-      <p>[TODO] The workhorse layout: claim on the left, editor detail and a proof point on the right.</p>
+      <p>The sequencing claim is the important one: <strong>starter before sitemap</strong>. The reverse order is how you end up with fifteen pages and a template that can only express eight of them.</p>
+      <p>Counting layouts against the inventory is cheap. Redoing the sitemap around a template constraint is not.</p>
     </div>
   </section>
 
-  <!-- ══════════ 05 · FIGURE + BULLETS ══════════ -->
-  <section class="slide" data-title="[TODO] phase title">
+  <!-- ══════════ 06 · REJECTED STARTERS ══════════ -->
+  <section class="slide" data-title="Why this starter">
     <div class="slide__inner">
-      <p class="eyebrow">[TODO] Phase N — phase name</p>
+      <p class="eyebrow">Phase 01 — the decision record</p>
       <div class="headline-rule"></div>
-      <h2 class="slide__title">[TODO] Screenshot left, explanation right.</h2>
-      <div class="stepgrid" style="margin-top:clamp(18px,2.6vh,28px)">
-        <figure class="shot" style="margin:0">
-          <img src="images/elementor-editor.png" alt="[TODO] describe the screenshot" />
-          <figcaption>[TODO] Caption: what the screenshot is showing, and where to look.</figcaption>
-        </figure>
-        <div class="guide">
-          <h3>[TODO] What to notice</h3>
-          <ul class="bullets">
-            <li>[TODO] Point with a <strong>specific</strong> detail — a value, a name, a location.</li>
-            <li>[TODO] Second point.</li>
-            <li>[TODO] Third point.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="notes" data-notes>
-      <p>[TODO] Screenshot carries the evidence; the bullets only name what to look at.</p>
-    </div>
-  </section>
-
-  <!-- ══════════ 06 · THUMB STRIP ══════════ -->
-  <section class="slide slide--card" data-title="[TODO] every page, one system">
-    <div class="slide__inner">
-      <p class="eyebrow">[TODO] Consistency</p>
-      <div class="headline-rule"></div>
-      <h2 class="slide__title">[TODO] Every page, one system.</h2>
-      <p class="lede">[TODO] One sentence on why consistency is cheaper to maintain than variety.</p>
-      <div class="thumbs thumbs--uniform">
-        <figure class="shot" style="margin:0"><img src="images/elementor-editor.png" alt="[TODO]" /><figcaption>[TODO] Page</figcaption></figure>
-        <figure class="shot" style="margin:0"><img src="images/elementor-editor.png" alt="[TODO]" /><figcaption>[TODO] Page</figcaption></figure>
-        <figure class="shot" style="margin:0"><img src="images/elementor-editor.png" alt="[TODO]" /><figcaption>[TODO] Page</figcaption></figure>
-        <figure class="shot" style="margin:0"><img src="images/elementor-editor.png" alt="[TODO]" /><figcaption>[TODO] Page</figcaption></figure>
-      </div>
-    </div>
-    <div class="notes" data-notes>
-      <p>[TODO] Four screenshots at uniform crop height. <code>thumbs--uniform</code> keeps them level.</p>
-    </div>
-  </section>
-
-  <!-- ══════════ 07 · CHECKLIST ══════════ -->
-  <section class="slide slide--sheet slide--card" data-title="[TODO] checklist title">
-    <div class="slide__inner">
-      <p class="eyebrow">[TODO] Handover</p>
-      <h2 class="slide__title">[TODO] Ten things the client owns on day one.</h2>
-      <ul class="checklist">
-        <li>[TODO] Editable field</li>
-        <li>[TODO] Editable field</li>
-        <li>[TODO] Editable field</li>
-        <li>[TODO] Editable field</li>
-        <li>[TODO] Editable field</li>
-        <li>[TODO] Editable field</li>
-        <li>[TODO] Editable field</li>
-        <li>[TODO] Editable field</li>
-        <li>[TODO] Editable field</li>
-        <li>[TODO] Editable field</li>
-      </ul>
-    </div>
-    <div class="notes" data-notes>
-      <p>[TODO] Ten items, two columns of five — the grid is set for exactly that.</p>
-    </div>
-  </section>
-
-  <!-- ══════════ 08 · COMPARISON TABLE ══════════ -->
-  <section class="slide" data-title="[TODO] comparison title">
-    <div class="slide__inner">
-      <p class="eyebrow">[TODO] Trade-offs</p>
-      <div class="headline-rule"></div>
-      <h2 class="slide__title">[TODO] Where the page builder wins, and where it costs you.</h2>
+      <h2 class="slide__title">Why this one, and what was rejected.</h2>
       <div class="table-wrap">
         <table class="data">
           <thead>
-            <tr><th>[TODO] Concern</th><th>[TODO] With Elementor</th><th>[TODO] The trade-off</th></tr>
+            <tr><th>Candidate</th><th>Verdict</th><th>Why</th></tr>
           </thead>
           <tbody>
-            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
-            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
-            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
-            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
-            <tr><td>[TODO]</td><td>[TODO]</td><td>[TODO]</td></tr>
+            <tr><td>Non-profit organisation 04</td><td><span class="verdict verdict--yes">Chosen</span></td><td>Ships six page layouts — enough to duplicate across the whole build without designing templates.</td></tr>
+            <tr><td>Elderly care 02</td><td><span class="verdict verdict--no">Rejected</span></td><td>Earlier candidate. Mixing two starters costs more than it saves.</td></tr>
+            <tr><td>Charity 02</td><td><span class="verdict verdict--no">Rejected</span></td><td>Handwritten type and campaign colours. Wrong voice for the brand.</td></tr>
+            <tr><td>Communities 02</td><td><span class="verdict verdict--no">Rejected</span></td><td>Donate band on every page. The client never asked for that.</td></tr>
+            <tr><td>Clinic / hospital 04</td><td><span class="verdict verdict--no">Rejected</span></td><td>A clinic-and-appointments site. One service is not the brand.</td></tr>
           </tbody>
         </table>
       </div>
       <div class="callout">
-        <span class="callout__label">The line</span>
-        <p class="callout__text">[TODO] The decision rule: when to stay in the builder, when to drop to custom code or a different build target.</p>
+        <span class="callout__label">Why write these down</span>
+        <p class="callout__text">The rejections <strong>are</strong> the answer to every remaining "why can't we just…". A rejected template that keeps coming back is a decision being relitigated in week nine because nobody wrote it down in week one.</p>
       </div>
     </div>
     <div class="notes" data-notes>
-      <p>[TODO] Be even-handed. Naming the cost is what makes the recommendation credible.</p>
+      <p>Four rejections is a healthy ratio. A process that only records the winner gives you nothing to fall back on when the client's cousin has an opinion about the charity one.</p>
+      <p>Read the reasons aloud — the voice, the donate band, the clinic. Each is a design judgement, not a technical one.</p>
     </div>
   </section>
 
-  <!-- ══════════ 09 · STATS ══════════ -->
-  <section class="slide slide--card" data-title="[TODO] numbers title">
+  <!-- ══════════ 07 · THE STARTER REMAP ══════════ -->
+  <section class="slide" data-title="The starter remap">
     <div class="slide__inner">
-      <p class="eyebrow">[TODO] By the numbers</p>
+      <p class="eyebrow">The whole build, in one table</p>
       <div class="headline-rule"></div>
-      <h2 class="slide__title">[TODO] What the client ends up holding.</h2>
-      <div class="stat-row">
-        <div class="stat"><span class="stat__value">[TODO]</span><span class="stat__label">[TODO]</span></div>
-        <div class="stat"><span class="stat__value">[TODO]</span><span class="stat__label">[TODO]</span></div>
-        <div class="stat"><span class="stat__value">[TODO]</span><span class="stat__label">[TODO]</span></div>
-        <div class="stat"><span class="stat__value">[TODO]</span><span class="stat__label">[TODO]</span></div>
+      <h2 class="slide__title">Six layouts, fifteen pages.</h2>
+      <div class="remap">
+        <div class="remap__row"><div class="remap__from">Home</div><div class="remap__arrow">→</div><div class="remap__to">Home <span class="remap__x">copy &amp; photos only</span></div></div>
+        <div class="remap__row"><div class="remap__from">About us</div><div class="remap__arrow">→</div><div class="remap__to">About us <span class="remap__x">×1</span></div></div>
+        <div class="remap__row"><div class="remap__from">Our work</div><div class="remap__arrow">→</div><div class="remap__to">Programs landing <span class="remap__x">×6 — landing + 5 services</span></div></div>
+        <div class="remap__row"><div class="remap__from">Stories</div><div class="remap__arrow">→</div><div class="remap__to">News &amp; updates <span class="remap__x">×1</span></div></div>
+        <div class="remap__row"><div class="remap__from">Donate</div><div class="remap__arrow">→</div><div class="remap__to">Ways to give <span class="remap__x">×1</span></div></div>
+        <div class="remap__row"><div class="remap__from">Contact</div><div class="remap__arrow">→</div><div class="remap__to">Contact us <span class="remap__x">×1</span></div></div>
+        <p class="remap__foot"><strong>Duplicate, don't design.</strong> The remaining six pages — the foundation, the endowment, events, newsletters, careers and the giving cluster — are duplicates of these same six layouts. Nothing is drawn from a blank canvas.</p>
       </div>
     </div>
     <div class="notes" data-notes>
-      <p>[TODO] Every number must be checkable. <code>auto-fit</code> means 3 or 5 stats both lay out correctly.</p>
+      <p>Six in, fifteen out, and the arithmetic is the point. There is no page on the list that somebody has to build from nothing.</p>
+      <p>When someone asks for a genuinely new page, this is the slide that shows the cost: a new page usually means a new layout, and a new layout usually means custom CSS.</p>
     </div>
   </section>
 
-  <!-- ══════════ 10 · SPLIT ══════════ -->
-  <section class="slide slide--dark" data-title="[TODO] split title">
+  <!-- ══════════ 08 · PHASE 02 — SITEMAP ══════════ -->
+  <section class="slide" data-title="Phase 2 — Sitemap">
     <div class="slide__inner">
-      <p class="eyebrow">[TODO] Two paths</p>
-      <h2 class="slide__title">[TODO] The same process, two different build targets.</h2>
-      <div class="split" style="margin-top:clamp(18px,2.6vh,30px)">
-        <div>
-          <h3 class="split__head">[TODO] Path A</h3>
+      <p class="eyebrow">Phase 02 — Sitemap</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">The sitemap is a page, and it is the argument.</h2>
+      <div class="stepgrid" style="margin-top:clamp(18px,2.6vh,28px)">
+        <ul class="bullets">
+          <li>Write the sitemap <strong>before the wireframes</strong>. Page-versus-section is the decision that costs most to reverse.</li>
+          <li>Build it as a <strong>real page in the prototype</strong>, not a diagram. Then it is reviewable, linkable and testable by the client.</li>
+          <li>Give the parent page real children, so breadcrumbs mean something: <strong>Home › Programs › Health &amp; Well Being</strong>.</li>
+          <li>Mark what is a page and what is a section. Promoting a section later changes navigation, breadcrumbs and URLs.</li>
+          <li>Mark the utility pages that <strong>don't count</strong> against the contract, and the stakeholder artefacts that never ship.</li>
+        </ul>
+        <div class="guide">
+          <h3>Why in code</h3>
           <ul class="bullets">
-            <li>[TODO] Point</li>
-            <li>[TODO] Point</li>
-            <li>[TODO] Point</li>
+            <li>Reviewable in a browser</li>
+            <li>Links actually resolve</li>
+            <li>Cheap to reorganise</li>
+          </ul>
+          <div class="proof">
+            <span>Reorganisation tax</span>
+            <p>Moving a page in code is a one-line edit. Moving a box in a diagram means every downstream box, arrow and label moves too.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>The parent/child detail is not pedantry. Flat pages give you no breadcrumbs, and breadcrumbs are the cheapest navigation a fifteen-page site can have.</p>
+      <p>Have the page-count cap visible while this is discussed, not in a contract appendix.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 09 · THE INVENTORY ══════════ -->
+  <section class="slide slide--card" data-title="The page inventory">
+    <div class="slide__inner">
+      <p class="eyebrow">Phase 02 — the inventory</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">Fifteen pages, and what isn't one.</h2>
+      <div class="tree">
+        <ul>
+          <li>
+            <div class="tree__item"><span class="tree__name">Home</span><span class="tree__slug">/</span></div>
+          </li>
+          <li>
+            <div class="tree__item"><span class="tree__name">About us</span><span class="tree__slug">/about</span><span class="tree__mark">4 sections</span></div>
+          </li>
+          <li>
+            <div class="tree__item"><span class="tree__name">Programs &amp; services</span><span class="tree__slug">/programs</span><span class="tree__mark">parent</span></div>
+            <ul>
+              <li><div class="tree__item tree__item--child"><span class="tree__name">Community day services</span></div></li>
+              <li><div class="tree__item tree__item--child"><span class="tree__name">Vocational program</span><span class="tree__mark tree__mark--cut">scope cut</span></div></li>
+              <li><div class="tree__item tree__item--child"><span class="tree__name">Athletics program</span></div></li>
+              <li><div class="tree__item tree__item--child"><span class="tree__name">Residential living</span></div></li>
+              <li><div class="tree__item tree__item--child"><span class="tree__name">Health &amp; well being</span><span class="tree__mark">5 sections</span></div></li>
+            </ul>
+          </li>
+          <li>
+            <div class="tree__item"><span class="tree__name">Support foundation</span><span class="tree__slug">/support-foundation</span><span class="tree__mark">merged</span></div>
+          </li>
+          <li>
+            <div class="tree__item"><span class="tree__name">Endowment society</span><span class="tree__slug">/endowment-society</span></div>
+          </li>
+          <li>
+            <div class="tree__item"><span class="tree__name">Events</span><span class="tree__slug">/events</span><span class="tree__mark">4 sections</span></div>
+          </li>
+          <li>
+            <div class="tree__item"><span class="tree__name">News &amp; updates</span><span class="tree__slug">/news</span><span class="tree__mark">blog hub</span></div>
+          </li>
+          <li>
+            <div class="tree__item"><span class="tree__name">Newsletters</span><span class="tree__slug">/newsletters</span></div>
+          </li>
+          <li>
+            <div class="tree__item"><span class="tree__name">Careers</span><span class="tree__slug">/careers</span></div>
+          </li>
+          <li>
+            <div class="tree__item"><span class="tree__name">Contact us</span><span class="tree__slug">/contact</span><span class="tree__mark">4 sections</span></div>
+          </li>
+        </ul>
+      </div>
+      <div class="callout">
+        <span class="callout__label">Also on the list</span>
+        <p class="callout__text">A privacy page (<span class="tree__slug" style="font-size:.9em">/privacy</span>) that does not count against the fifteen, and a stakeholder sitemap page that <strong>must not be published</strong> — it is a project artefact, not a page.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>Three marks carry all the weight: <strong>parent</strong>, <strong>scope cut</strong>, <strong>merged</strong>. Each one exists because leaving it ambiguous costs a conversation later.</p>
+      <p>The scope cut is agreed now, while it costs nothing. It only works as a lever if it was named before there was any pressure to use it.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 10 · LOCK IT DOWN ══════════ -->
+  <section class="slide" data-title="Lock what's expensive to change">
+    <div class="slide__inner">
+      <p class="eyebrow">Phase 02 — the lock</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">Lock what's expensive to change.</h2>
+      <ul class="checklist">
+        <li><strong>Slugs</strong> — old URLs may already be in circulation</li>
+        <li><strong>Page count</strong> — the contract cap, and what counts toward it</li>
+        <li><strong>Nav items</strong> — and what lives inside a dropdown</li>
+        <li><strong>Page versus section</strong>, for everything on the list</li>
+        <li><strong>CTA destinations</strong> — every button, and where it lands</li>
+        <li><strong>Parent/child structure</strong> — drives every breadcrumb</li>
+        <li><strong>The scope cut</strong> — named before there's pressure</li>
+        <li><strong>Utility pages</strong> — which are free, which count</li>
+        <li><strong>Stakeholder artefacts</strong> — which never ship</li>
+        <li><strong>What the build may not add</strong> — written down, not implied</li>
+      </ul>
+    </div>
+    <div class="notes" data-notes>
+      <p>Free-tier change versus expensive change. Everything on this list is cheap to decide in week one and expensive to change in week eight, because it propagates.</p>
+      <p>The last item is the unusual one. Telling the build what it <em>can't</em> do is worth more than telling it what to do.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 11 · PHASE 03 — WIREFRAMES ══════════ -->
+  <section class="slide" data-title="Phase 3 — Wireframes">
+    <div class="slide__inner">
+      <p class="eyebrow">Phase 03 — Wireframes</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">Build the wire in code, from the starter's own sections.</h2>
+      <div class="stepgrid" style="margin-top:clamp(18px,2.6vh,28px)">
+        <ul class="bullets">
+          <li>Wire every page in <strong>plain HTML</strong> — no framework, no build step, no component library.</li>
+          <li>Assemble each page from <strong>the sections the starter actually ships</strong>, in the starter's own order.</li>
+          <li>The wire settles <strong>content, order and hierarchy</strong>. It is not a design and shouldn't look like one.</li>
+          <li>Because it's code, a copy change is <strong>a one-line edit</strong> — not a frame rebuild.</li>
+          <li>If a layout doesn't exist in the starter, <strong>drop it</strong>. Don't add custom CSS to chase the prototype.</li>
+        </ul>
+        <div class="guide">
+          <h3>Two things it must never do</h3>
+          <ul class="bullets">
+            <li><strong>Look finished.</strong> If it looks designed, reviewers critique the styling instead of the structure.</li>
+            <li><strong>Become the deliverable.</strong> Plain HTML, deliberately: nothing here is worth porting.</li>
+          </ul>
+          <div class="proof">
+            <span>No framework is a choice</span>
+            <p>A framework makes the wire look like a product, invites "can we just ship this?", and creates components nobody will maintain. Boring on purpose.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>"Looks greyed out" is a feature. The moment the wire looks polished, the client's feedback becomes about colour and spacing, and you lose the structure round.</p>
+      <p>Plain HTML is the enforcement mechanism for "this is not the product" — there is no port, no framework to unpick, nothing to keep alive after the build.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 12 · THE WIRE IS NOT THE PRODUCT ══════════ -->
+  <section class="slide slide--dark" data-title="The wire is not the product">
+    <div class="slide__inner">
+      <p class="eyebrow">The one rule that saves the build</p>
+      <h2 class="slide__title">The wire is disposable. <span class="accent">Say so out loud.</span></h2>
+      <p class="lede">It is never ported, embedded or deployed. When the build starts in the page builder, the wire has already done its job and is thrown away. Say this at kickoff, because the alternative is a build team quietly trying to honour it.</p>
+      <div class="duo">
+        <div class="duo__col duo__col--drop">
+          <h3 class="duo__head">The file says so itself</h3>
+          <p class="duo__note">On a real project, before anyone wrote a rule.</p>
+          <ul>
+            <li>Wireframes live on a canvas marked <strong>⚠ with a warning sign</strong></li>
+            <li>Design lives on a canvas marked <strong>✅ with a tick</strong></li>
+            <li>The template's own homepage sits in a canvas called <strong>Bin</strong>, deleted</li>
+            <li>The wires are <strong>1920 wide</strong>; the designs are 1440</li>
           </ul>
         </div>
-        <div>
-          <h3 class="split__head">[TODO] Path B</h3>
-          <ul class="bullets">
-            <li>[TODO] Point</li>
-            <li>[TODO] Point</li>
-            <li>[TODO] Point</li>
+        <div class="duo__col duo__col--drop">
+          <h3 class="duo__head">Why that's a good sign</h3>
+          <p class="duo__note">A convention nobody policed is the team agreeing already.</p>
+          <ul>
+            <li>The naming <strong>marks the status</strong> before a conversation does</li>
+            <li>Binning the template's page shows it was <strong>replaced, not reused</strong></li>
+            <li>The width gap is a <strong>real handoff failure</strong> — see slide 14</li>
           </ul>
         </div>
       </div>
       <div class="callout">
-        <span class="callout__label">The point</span>
-        <p class="callout__text">[TODO] What stays constant regardless of which path the client takes.</p>
+        <span class="callout__label">Why it matters</span>
+        <p class="callout__text">The moment the wire looks like a product, it acquires a constituency. A stakeholder will ask why the live site can't just be <strong>the wire with real copy in it</strong> — and that question costs more to answer than the whole wireframe phase saved.</p>
       </div>
     </div>
     <div class="notes" data-notes>
-      <p>[TODO] Dark slide — the chrome inverts automatically via the <code>dark-mode</code> body class.</p>
+      <p>Say it in the first meeting, in those words. The question is guaranteed to arrive, and having a pre-agreed answer defuses it.</p>
+      <p>If the answer is ever "yes, ship the wire", the constraint model has already failed and you should know on day one rather than week eight.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 13 · KEEPING THE WIRE HONEST ══════════ -->
+  <section class="slide" data-title="Placeholders are a scope control">
+    <div class="slide__inner">
+      <p class="eyebrow">Phase 03 — discipline</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">Placeholders are a scope control.</h2>
+      <p class="lede">Deciding in advance which text is real and which is greeked stops a build being held up by copy that was never going to be approved.</p>
+      <div class="duo">
+        <div class="duo__col duo__col--keep">
+          <h3 class="duo__head">Keep real</h3>
+          <p class="duo__note">Structure is being reviewed, so structure is real.</p>
+          <ul>
+            <li>Headings, titles, eyebrow labels</li>
+            <li>Slugs, URLs, nav labels</li>
+            <li>Contact data</li>
+            <li>Structured lists — gift methods, levels, timeline years</li>
+            <li>Section order and count</li>
+          </ul>
+        </div>
+        <div class="duo__col duo__col--drop">
+          <h3 class="duo__head">Use placeholder</h3>
+          <p class="duo__note">Prose is not what's being reviewed, so don't review it.</p>
+          <ul>
+            <li>Paragraph body and ledes</li>
+            <li>Card blurbs and story excerpts</li>
+            <li>Photography — labelled placeholders</li>
+            <li>Anything a client will "have a look at later"</li>
+            <li>Section summaries and intros</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">
+        <span class="callout__label">The rule</span>
+        <p class="callout__text">Don't polish a paragraph you know is placeholder — you'll polish it twice. And don't build a layout that depends on <strong>one photograph's crop</strong>, or every later asset swap becomes a rebuild.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>This table gets pushed back on. Someone will want to write real paragraphs "since we have them". The answer is that unapproved copy is a liability, not a saving.</p>
+      <p>Make placeholders visually obvious. A placeholder that looks like real copy will eventually be reviewed, approved, and shipped by accident.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 14 · PHASE 04 — DESIGN ══════════ -->
+  <section class="slide" data-title="Phase 4 — Design">
+    <div class="slide__inner">
+      <p class="eyebrow">Phase 04 — Design</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">The design follows the content.</h2>
+      <div class="stepgrid" style="margin-top:clamp(18px,2.6vh,28px)">
+        <ul class="bullets">
+          <li>The wires settle what the pages say. The design file is then <strong>brought up to that content</strong>, so it describes the agreed site rather than an earlier idea of it.</li>
+          <li>Design work happens against <strong>real structure</strong> — real sections, real order, real URLs — not placeholders.</li>
+          <li>Mark the wireframe canvas as provisional, because it is. Anyone finding it later should know.</li>
+          <li>Every change note carries the <strong>design file's node ID</strong>, or the change can't be found again.</li>
+          <li>The client reviews in the design file; the change lands in the wire; the preview updates.</li>
+          <li><strong>Agree the frame width up front.</strong> The wires were drawn at 1920 and the designs at 1440, and reconciling that was real work.</li>
+        </ul>
+        <div class="guide">
+          <h3>Still the starter's job</h3>
+          <ul class="bullets">
+            <li>Design aligns content <strong>to the template</strong></li>
+            <li>It doesn't redesign the template</li>
+            <li>Drift away from it is the default failure, and it gets corrected</li>
+          </ul>
+          <div class="proof">
+            <span>Expect a pull-back</span>
+            <p>The wire drifted off-template twice and had to be re-anchored. Treat that as normal, not as a failure — and fix the frame width before it costs a round.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>The direction matters and it's the opposite of the bespoke deck: here the wires lead and the design file follows.</p>
+      <p>Node IDs are unglamorous and essential. Design files reassign them when frames move, so the ID has to travel with the change note or the note is worthless.</p>
+      <p>The width mismatch is a nice detail to volunteer — 1920 wires against 1440 designs means the two artefacts were never really the same viewport, which quietly invalidates a lot of "it matches" feedback.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 15 · GOVERNING THE FEEDBACK ══════════ -->
+  <section class="slide slide--card" data-title="Governing the feedback">
+    <div class="slide__inner">
+      <p class="eyebrow">Phase 04 — the ladder</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">Decide the tier before the round starts.</h2>
+      <div class="ladder">
+        <div class="rung rung--free">
+          <div class="rung__label">Change freely<span class="rung__note">Wireframe decisions. Cost nothing.</span></div>
+          <ul class="rung__list">
+            <li>Section order within a page</li>
+            <li>Headings and button labels that keep their destination</li>
+            <li>Paragraph length and placeholder tone</li>
+            <li>Which image placeholder goes where</li>
+            <li>Flipping a split section left/right</li>
+            <li>Card counts, within what the starter supports</li>
+          </ul>
+        </div>
+        <div class="rung rung--call">
+          <div class="rung__label">Bring to a call<span class="rung__note">Changes scope, cost or URLs.</span></div>
+          <ul class="rung__list">
+            <li>A new page or a new slug</li>
+            <li>A new nav or dropdown item</li>
+            <li>A new section type the starter lacks</li>
+            <li>A new colour, font or button style</li>
+            <li>A new CTA destination</li>
+            <li>Promoting a section to a page</li>
+          </ul>
+        </div>
+        <div class="rung rung--never">
+          <div class="rung__label">Never<span class="rung__note">Not a preference. A rule.</span></div>
+          <ul class="rung__list">
+            <li>A custom child theme</li>
+            <li>A rebuilt header or footer in the builder</li>
+            <li>A new plugin without a concrete need</li>
+            <li>A second starter import</li>
+            <li>Porting the wire to production</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">
+        <span class="callout__label">Agree it early</span>
+        <p class="callout__text">A ladder agreed before round one settles most feedback without a meeting. An unagreed one turns every small request into a negotiation about which tier it's in.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>The "never" rung is deliberately short and deliberately absolute. Those five lines are where a fixed-theme build quietly becomes an unbounded one.</p>
+      <p>If a client asks for something on the never rung, the answer is a conversation about the constraint, not a quiet workaround.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 16 · EXPECT THE HOMEPAGE ══════════ -->
+  <section class="slide" data-title="Expect the homepage to be argued">
+    <div class="slide__inner">
+      <p class="eyebrow">Phase 04 — expectations</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">Expect the homepage to be argued more than once.</h2>
+      <div class="stepgrid" style="margin-top:clamp(18px,2.6vh,28px)">
+        <ul class="bullets">
+          <li>That is <strong>the process working</strong>, not failing. An engagement that never revisits the homepage is being under-reviewed.</li>
+          <li>Front-load it. It is the one page every nav entry points at, so it carries the most downstream cost.</li>
+          <li>When it changes, <strong>check the whole site</strong> — the hero and the primary CTA are often site-wide, not homepage-only.</li>
+          <li>Get sign-off before spending rounds on inner pages. Approval below the homepage rarely holds.</li>
+        </ul>
+        <div class="guide">
+          <h3>What round one usually is</h3>
+          <ul class="bullets">
+            <li>Nav labels</li>
+            <li>Section order</li>
+            <li>Two sections that shouldn't both be there</li>
+          </ul>
+          <div class="proof">
+            <span>Budget for it</span>
+            <p>The homepage was reworked several times on a real build, including being pulled back to match the template. Plan the rounds, don't treat them as failure.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>The uncomfortable slide, and the most useful one. Newer designers read repeated homepage rounds as a sign the work was wrong.</p>
+      <p>It isn't. The homepage is where the client's positioning gets argued, and that argument has to happen somewhere.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 17 · WHAT THE BUILD INHERITS ══════════ -->
+  <section class="slide" data-title="What the build inherits">
+    <div class="slide__inner">
+      <p class="eyebrow">Phase 05 — Hand off</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">What the build team inherits.</h2>
+      <div class="panel">
+        <div class="panel__col panel__col--owns">
+          <span class="panel__tag">Set once, site-wide</span>
+          <h3 class="panel__head">In the theme</h3>
+          <ul>
+            <li>Colours, typography, container width</li>
+            <li>Logo</li>
+            <li>Header and sticky behaviour</li>
+            <li>Above-header announcement bar</li>
+            <li>Footer</li>
+            <li>Menus and the header button</li>
+          </ul>
+        </div>
+        <div class="panel__col">
+          <span class="panel__tag">Per page, in the builder</span>
+          <h3 class="panel__head">Page canvases</h3>
+          <ul>
+            <li>Content into imported layouts</li>
+            <li>Duplicated inner pages</li>
+            <li>Page-level sections only</li>
+            <li>No per-page restyling of globals</li>
+            <li>No header or footer in the builder</li>
+          </ul>
+        </div>
+        <div class="panel__col">
+          <span class="panel__tag">Native to the platform</span>
+          <h3 class="panel__head">The CMS</h3>
+          <ul>
+            <li>News as posts and a category archive</li>
+            <li>Contact and signup forms</li>
+            <li>Simple utility pages</li>
+            <li>No plugin unless there's a need</li>
+            <li>Events are a page with sections, not a calendar</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout">
+        <span class="callout__label">What actually ships</span>
+        <p class="callout__text">The handoff is <strong>the decisions and the constraints together</strong> — not a design file. A build team that inherits the ladder from slide 15 can say no on its own, without a call.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>Three columns, three owners. The most common failure is the middle one leaking into the left — a per-page restyle that quietly forks the design system.</p>
+      <p>Handing over the rules is what makes the constraint survive the people who wrote it.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 18 · BUILD ORDER ══════════ -->
+  <section class="slide" data-title="Build order">
+    <div class="slide__inner">
+      <p class="eyebrow">Phase 05 — the order that matters</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">One starter, one import, one inner layout reused.</h2>
+      <ol class="steps">
+        <li>Import the starter onto clean staging</li>
+        <li>Set the globals once — colour, type, logo, header, footer, menus</li>
+        <li>Create every page at its locked slug; empty is fine</li>
+        <li>Home — copy into the imported layout</li>
+        <li>Duplicate the inner layout for each service page</li>
+        <li>About, contact, careers</li>
+        <li>The support and giving cluster</li>
+        <li>News as posts, plus its archive</li>
+        <li>Wire the forms to real destinations</li>
+        <li>Preview against the wires, then hand off</li>
+      </ol>
+      <div class="callout">
+        <span class="callout__label">Why this order</span>
+        <p class="callout__text">Globals before pages, and pages before forms. Set a global after the pages exist and you have fifteen pages to revisit — which is how a single colour change quietly becomes a day of work.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>Step 3 is the one people skip. Creating every page at its slug while empty takes minutes and means the nav, menus and breadcrumbs can be built once, properly.</p>
+      <p>Duplicating the inner layout is the step that makes fifteen pages cheap. Resist re-designing the fifth one because it feels repetitive.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 19 · WHAT THE CONSTRAINT COST ══════════ -->
+  <section class="slide" data-title="What the constraint cost">
+    <div class="slide__inner">
+      <p class="eyebrow">Honestly</p>
+      <div class="headline-rule"></div>
+      <h2 class="slide__title">What the template took.</h2>
+      <div class="stepgrid" style="margin-top:clamp(16px,2.2vh,26px)">
+        <ul class="bullets">
+          <li><strong>The accent colour took three attempts.</strong> Retuning a theme's existing palette is not the same as setting your own.</li>
+          <li><strong>A left-align lost to a generic centred rule.</strong> Builder stylesheets win by default; you fight them one line at a time.</li>
+          <li><strong>A child theme got created anyway</strong> — for a genuine accessibility need. The rule allowed a narrow exception, and taking it was the right call.</li>
+        </ul>
+        <ul class="bullets">
+          <li><strong>A paid addon got installed</strong> despite a plan that said skip it. The plan was wrong, not the install.</li>
+          <li><strong>Three documents disagreed.</strong> The written rules, the process doc <em>and</em> the design file's own sitemap all drifted — each stale in a different way.</li>
+          <li><strong>The footer stayed dark</strong> after a rule that says white-with-a-rule, not a dark bar. The wires and the design both still had it.</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <span class="callout__label">None of these are reasons not to use it</span>
+        <p class="callout__text">They're the reason to <strong>write the rules down before the build starts</strong> — so the exceptions are decided rather than discovered, and no document can quietly go stale while another is canonical.</p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>Show this one. A process deck that only describes the ideal is marketing; the friction is what makes the method credible.</p>
+      <p>Each item is a mechanism, not a complaint: template palettes resist retuning, builder CSS wins by default, exceptions get taken, documents drift, and a rule you don't check gets quietly undone.</p>
+      <p>The footer is the sharpest example. A written rule — <em>white footer, not a dark bar</em> — was ignored by both the wireframes and the design, because nothing re-checked the rule against the artefact. Written rules that nobody audits are just good intentions.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 20 · REUSABLE EITHER WAY ══════════ -->
+  <section class="slide slide--dark" data-title="Reusable either way">
+    <div class="slide__inner">
+      <p class="eyebrow">What carries to the next build</p>
+      <h2 class="slide__title">The template and the wire are replaceable. <span class="accent">The process isn't.</span></h2>
+      <div class="licences">
+        <div class="lic lic--kept">
+          <span class="lic__tag">Keep</span>
+          <h4>The rules file</h4>
+          <p>One canonical document of slugs, palette, structure and prohibitions. It outranks chat history, and it survives everyone who wrote it.</p>
+        </div>
+        <div class="lic lic--kept">
+          <span class="lic__tag">Keep</span>
+          <h4>The change ladder</h4>
+          <p>Free, call, never. Agreed once before round one, and reused unchanged on every engagement after this one.</p>
+        </div>
+        <div class="lic lic--kept">
+          <span class="lic__tag">Keep</span>
+          <h4>The scope cut</h4>
+          <p>Named before there's any pressure to use it. Then trimming late is a decision rather than a crisis.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <span class="callout__label">The test</span>
+        <p class="callout__text">This process works on a bespoke code build, on a page builder, and on whatever replaces both. <strong>The starter changes; the ladder, the rules file and the pre-agreed cut do not.</strong></p>
+      </div>
+    </div>
+    <div class="notes" data-notes>
+      <p>Close on the transfer, not the tool. The sibling deck makes the same argument from the other direction — different build target, same discipline.</p>
+      <p>Close on the "test" line: name the next build target and ask what survives. If the answer is more than these three, the process has been re-invented instead of reused.</p>
     </div>
   </section>
 
 </div><!-- /.deck -->
 
 <div class="chrome chrome--top">
-  <span class="brand">[TODO] Brand · Process Playbook</span>
-  <span class="counter"><span class="counter__now" id="counterNow">01</span> / <span id="counterTotal">10</span></span>
+  <span class="brand">CloudMellow · Astra + Elementor Playbook</span>
+  <span class="counter"><span class="counter__now" id="counterNow">01</span> / <span id="counterTotal">20</span></span>
 </div>
 
 <div class="chrome chrome--bottom">

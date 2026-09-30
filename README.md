@@ -1,46 +1,54 @@
-# CloudMellow Process Playbook
+# Workflow ideas
 
-**From kickoff call to dev-ready build** — the seven-phase process, taught from the Gerotech website redesign.
+CloudMellow process playbooks. Two decks on the same discipline from opposite ends: one where we own
+the design system, one where a template owns it for us.
 
-## View it
+Both are self-contained HTML — no build step, no dependencies. Open either in a browser.
 
-Open `index.html`, or read the deck directly at `gerotech-process-playbook.html`.
+## The decks
+
+| Deck | Slides | What it teaches |
+|---|---|---|
+| [`astra-elementor-process.html`](astra-elementor-process.html) | 20 | Running a design engagement on a **fixed theme and page builder**. The starter is imported first and decides how the site looks; the sitemap and wireframes are built in plain code to map it; the design is brought up to the content; the build inherits the constraints. |
+| [`gerotech-process-playbook.html`](gerotech-process-playbook.html) | 21 | The bespoke counterpart — **we own the design system**. Wireframes, design and the build are all made in code and presented in Figma, so a content change takes minutes. Seven phases, discovery to hand-off. |
+
+Start at [`index.html`](index.html).
+
+## Reading a deck
 
 - **← / →** navigate (also Prev/Next, space, or swipe)
 - **N** toggles speaker notes
 - **P** prints — each slide on its own landscape page, so "Save as PDF" gives a handout
 - Deep-link any slide with `#slide-7`
 
-## Contents
+The Astra/Elementor deck also has a full [speaker-notes file](astra-elementor-notes.md) with
+per-slide talking points, likely Q&A, and the worked example's anonymisation rules.
+
+## The shared idea
+
+The two decks look different but run the same loop: **agree the structure and the constraints early,
+while changing them is still free.** On the page-builder build that means the starter comes before
+the sitemap. On the bespoke build it means the wireframes are code, so a content change is an edit
+rather than a rebuild.
+
+Both end the same way — a build team that inherits written-down decisions, not a folder of assets.
+
+## Anonymisation
+
+`astra-elementor-process.html` and its notes are **anonymised**. The worked example is a real
+fifteen-page non-profit rebuild, and the structure, page counts and mechanisms are accurate — but the
+client name, location, contact details and brand palette have been removed, and the deck shows
+CloudMellow's own design tokens. Keep it that way if the deck is shown outside the team.
+
+The Gerotech deck names its own worked example and is not anonymised.
+
+## Files
 
 | File | What it is |
 |---|---|
-| `gerotech-process-playbook.html` | The 21-slide deck — self-contained, no build step |
-| `speaker-notes.md` | Per-slide talking points, likely Q&A, and terms to avoid out loud |
-| `images/` | Screenshots and one-pagers used by the deck |
-
-Every visual is real: the wireframe and design file from Figma, the working prototype, the live WordPress site, the client's own admin, and genuine audit output.
-
-## The process
-
-1. **Kickoff & discovery** — audit what exists; agree what success looks like
-2. **Sitemap** — structure and navigation, agreed while changing them is free
-3. **Wireframes** — built in code, presented in Figma; content edits take minutes
-4. **Design** — moodboards set direction, the homepage is agreed, then every page
-5. **Review & approve** — comments in Figma, mapped to the code with Cursor
-6. **Convert to WordPress** — the build target is agreed at kickoff; the process is the same either way
-7. **Hand off to dev** — a designed, working front end ready for complex functionality
-
-## How the two tools work together
-
-**Everything is built in code.** Wireframes, designs and the build itself — including responsive behaviour, layouts and animation concepts. Code is internal until the design phase, then it's what the client sees.
-
-**Figma is the room.** Everything the client sees and discusses happens there — wireframes, moodboards, designs, comments. **Code wireframes mean a content change is a five-minute edit, not hours of updating frames.**
-
-**The bridge:** [html.to.design](https://html.to.design/) imports the code into Figma as editable artboards, so code-built work is reviewed in the room the client already uses.
-
-**The loop:** client comments in Figma → we map each note to the code with Cursor → the change is made → the build is re-imported into Figma.
-
-## Build target
-
-The build target is the **client's choice, agreed at kickoff** — structured fields by default, or a page builder if they prefer one. Nothing in the process depends on it: the design system stays the source of truth, the client owns plain-language editing fields either way, and the prototype remains the QA reference.
+| `index.html` | Landing page linking both decks |
+| `astra-elementor-process.html` | The 20-slide fixed-template playbook |
+| `astra-elementor-notes.md` | Speaker notes for the fixed-template deck |
+| `gerotech-process-playbook.html` | The 21-slide bespoke playbook |
+| `speaker-notes.md` | Speaker notes for the bespoke deck |
+| `images/` | Screenshots and one-pagers used by the bespoke deck |
